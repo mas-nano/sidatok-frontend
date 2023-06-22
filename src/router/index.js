@@ -16,6 +16,12 @@ const router = createRouter({
           path: "register",
           name: "auth.register",
           component: () => import("../views/RegisterView.vue")
+        },
+        {
+          path: "verify",
+          name: "auth.verify",
+          component: () => import("../views/VerifyEmailView.vue"),
+          props: (route) => ({ query: route.query.token })
         }
       ]
     },

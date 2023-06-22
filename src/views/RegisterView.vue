@@ -4,12 +4,14 @@ import { ref } from "vue"
 import httpClient from "../axios"
 import { useLoadingStore } from "../stores/loading"
 import { toast } from "vue3-toastify"
+import { useToastToggleStore } from "../stores/toastToggle"
 
 const router = useRouter()
 const email = ref("")
 const name = ref("")
 const password = ref("")
 const passwordConfirmation = ref("")
+const toastToggle = useToastToggleStore()
 const loadingStore = useLoadingStore()
 
 function regsiter() {
@@ -22,13 +24,18 @@ function regsiter() {
     })
     .then((result) => {
       if (result.status == 200) {
-        toast.success("We sent verification email to your email. Please verify your email")
+        toastToggle.setToast(
+          "success",
+          "We sent verification email to your email. Please verify your email"
+        )
+        toastToggle.toggleToast()
+        console.log(toastToggle.toggle)
         router.push({ name: "auth.login" })
       }
     })
     .catch((error) => {
-      toast.error("An error has occured: " + error.response.data.msg)
       console.log(error)
+      toast.error("An error has occured: " + error.response.data.msg)
     })
 }
 function loginGoogle() {}
@@ -73,7 +80,12 @@ function loginGoogle() {}
         class="w-full py-2 px-3 border-2 border-gray-300 shadow-sm rounded-lg focus:border-[#f46801] focus:outline-none focus:ring focus:ring-orange-600 focus:ring-opacity-50"
       />
     </div>
-    <button class="my-2 px-3 py-2 bg-[#f46801] rounded-lg text-white">
+    <button
+      class="my-2 px-3 py-2 bg-[#f46801] rounded-lg text-white"
+      :class="loadingStore.loading ? 'bg-[#f57c22] cursor-not-allowed' : ''"
+      :disabled="loadingStore.loading"
+      type="submit"
+    >
       <font-awesome-icon
         :icon="['fas', 'spinner']"
         v-if="loadingStore.loading"

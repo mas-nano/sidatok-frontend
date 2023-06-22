@@ -1,12 +1,31 @@
 <script setup>
 import { RouterLink, useRouter } from "vue-router"
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { toast } from "vue3-toastify"
+import { useToastToggleStore } from "../stores/toastToggle"
 
 const router = useRouter()
 const email = ref("")
 const password = ref("")
 const isLoading = ref(false)
+const toastToggle = useToastToggleStore()
+
+onMounted(() => {
+  if (toastToggle.toggle) {
+    switch (toastToggle.typeToast) {
+      case "success":
+        toast.success(toastToggle.messageToast)
+        break
+      case "error":
+        toast.error(toastToggle.messageToast)
+        break
+
+      default:
+        break
+    }
+    toastToggle.toggleToast()
+  }
+})
 
 function login() {}
 
